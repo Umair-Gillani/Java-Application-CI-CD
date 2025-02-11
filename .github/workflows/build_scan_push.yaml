@@ -118,7 +118,7 @@ jobs:
       # Step 7: Check vulnerability threshold (Industry-Level + Custom Logic)
       - name: Check vulnerability threshold
         run: |
-          echo "Performing industry-level vulnerability checks..."
+          echo "Performing vulnerability checks..."
 
           echo "HIGH_COUNT: $HIGH_COUNT"
           echo "CRITICAL_COUNT: $CRITICAL_COUNT"
