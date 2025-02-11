@@ -1,4 +1,4 @@
-name: DB - Build, Scan, and Deploy Docker Image
+name: Build, Scan, and Deploy Docker Image
 
 on:
   push:
@@ -88,6 +88,7 @@ jobs:
           cd HelloWorldApp
           docker build -t $DOCKER_IMAGE_NAME:$DOCKER_TAG .
 
+
       # Step 6 : Scan Docker Image
       - name: Scan Docker image with Trivy
         id: trivy_scan
@@ -112,7 +113,6 @@ jobs:
 
           ############ echo "Total High + Critical vulnerabilities: $TOTAL_HIGH_CRITICAL"
           ############ echo "high_critical_count=$TOTAL_HIGH_CRITICAL" >> $GITHUB_ENV
-
 
 
       # Step 7: Check vulnerability threshold (Industry-Level + Custom Logic)
@@ -149,14 +149,6 @@ jobs:
           # If we reach here, none of the fail conditions triggered => pass
           echo "All vulnerability checks passed. Proceeding..."
           exit 0
-
-
-      # - name: Check vulnerability threshold
-      #   if: ${{ env.high_critical_count > 5 }}
-      #   run: |
-      #     echo "Vulnerability count exceeds threshold. Aborting push to Docker Hub."
-      #     exit 1
-
 
 
       # Step 8 : Docker Login
@@ -275,54 +267,88 @@ jobs:
 #           echo "Building Docker image..."
 #           sudo docker build -t $DOCKER_IMAGE_NAME:$DOCKER_TAG .
 
-#       # Step 5: Scan Docker image with Trivy
-#       - name: Scan Docker image with Trivy
-#         id: trivy_scan
-#         run: |
-#           echo "Scanning Docker image with Trivy..."
-#           # Run Trivy scan and save the JSON output to a file
-#           sudo trivy image --exit-code 0 --severity CRITICAL,HIGH --format json --no-progress $DOCKER_IMAGE_NAME > trivy_report.json
+      # # Step 5 : Scan Docker Image
+      # - name: Scan Docker image with Trivy
+      #   id: trivy_scan
+      #   run: |
+      #     echo "Scanning Docker image with Trivy..."
+      #     cd HelloWorldApp
+      #     trivy image --exit-code 0 --severity CRITICAL,HIGH --format json --no-progress $DOCKER_IMAGE_NAME:$DOCKER_TAG > trivy_report.json
 
-#           # Debugging: Print the trivy_report.json file to see what it contains
-#           #cat trivy_report.json
+      #     HIGH_COUNT=$(grep -o '"Severity": "HIGH"' trivy_report.json | wc -l)
+      #     CRITICAL_COUNT=$(grep -o '"Severity": "CRITICAL"' trivy_report.json | wc -l)
 
-#           # Extract High count using grep (Count occurrences of "Severity": "HIGH")
-#           HIGH_COUNT=$(grep -o '"Severity": "HIGH"' trivy_report.json | wc -l)
+      #     HIGH_COUNT=${HIGH_COUNT:-0}
+      #     CRITICAL_COUNT=${CRITICAL_COUNT:-0}
 
-#           # Extract Critical count using grep (Count occurrences of "Severity": "CRITICAL")
-#           CRITICAL_COUNT=$(grep -o '"Severity": "CRITICAL"' trivy_report.json | wc -l)
+      #     ############ TOTAL_HIGH_CRITICAL=$((HIGH_COUNT + CRITICAL_COUNT))
 
-#           # Handle cases where no values are found and set them to 0
-#           HIGH_COUNT=${HIGH_COUNT:-0}
-#           CRITICAL_COUNT=${CRITICAL_COUNT:-0}
+      #     echo "High vulnerabilities: $HIGH_COUNT"
+      #     echo "Critical vulnerabilities: $CRITICAL_COUNT"
+         
+      #     echo "HIGH_COUNT=$HIGH_COUNT" >> $GITHUB_ENV
+      #     echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
 
-#           # Calculate total High + Critical vulnerabilities
-#           TOTAL_HIGH_CRITICAL=$((HIGH_COUNT + CRITICAL_COUNT))
-
-#           # Log the results to the console
-#           echo "High vulnerabilities: $HIGH_COUNT"
-#           echo "Critical vulnerabilities: $CRITICAL_COUNT"
-#           echo "Total High + Critical vulnerabilities: $TOTAL_HIGH_CRITICAL"
-
-#           # Pass the result to GitHub Actions output via environment variable
-#           echo "high_critical_count=$TOTAL_HIGH_CRITICAL" >> $GITHUB_ENV
+      #     ############ echo "Total High + Critical vulnerabilities: $TOTAL_HIGH_CRITICAL"
+      #     ############ echo "high_critical_count=$TOTAL_HIGH_CRITICAL" >> $GITHUB_ENV
 
 
-#       # Step 6: Check vulnerability threshold and stop if above threshold
-#       - name: Check vulnerability threshold
-#         if: ${{ env.high_critical_count > 75 }}
-#         run: |
-#           echo "Vulnerability count exceeds threshold. Aborting push to Docker Hub."
-#           exit 1
+      # # Step 6: Check vulnerability threshold (Industry-Level + Custom Logic)
+      # - name: Check vulnerability threshold
+      #   run: |
+      #     echo "Performing vulnerability checks..."
 
-#       # Step 7: Tag and push Docker image to DockerHub
-#       - name: Tag and push Docker image to DockerHub
-#         if: ${{ env.high_critical_count <= 75 }}
-#         run: |
-#           echo "Tagging Docker image..."
-#           sudo docker tag $DOCKER_IMAGE_NAME:$DOCKER_TAG $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$DOCKER_TAG
-#           echo "Pushing Docker image to DockerHub..."
-#           sudo docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$DOCKER_TAG
+      #     echo "HIGH_COUNT: $HIGH_COUNT"
+      #     echo "CRITICAL_COUNT: $CRITICAL_COUNT"
+
+      #     # --- EXAMPLE 1: Zero-tolerance for ANY Critical vulnerabilities ---
+      #     # (Uncomment if your organization disallows ANY critical vulns)
+      #     #
+      #     # if [ "$CRITICAL_COUNT" -gt 0 ]; then
+      #     #   echo "Found $CRITICAL_COUNT critical vulnerabilities. Aborting push."
+      #     #   exit 1
+      #     # fi
+
+      #     # --- EXAMPLE 2: Maximum allowed CRITICAL vulnerabilities threshold ---
+      #     # If CRITICAL exceeds 75, fail immediately.
+      #     if [ "$CRITICAL_COUNT" -gt 5 ]; then
+      #       echo "Critical vulnerabilities ($CRITICAL_COUNT) exceed maximum allowed (5). Aborting push."
+      #       exit 1
+      #     fi
+
+      #     # --- EXAMPLE 3: Maximum allowed HIGH vulnerabilities threshold ---
+      #     # If HIGH exceeds, say, 50, fail. Adjust as needed.
+      #     if [ "$HIGH_COUNT" -gt 50 ]; then
+      #       echo "High vulnerabilities ($HIGH_COUNT) exceed maximum allowed (50). Aborting push."
+      #       exit 1
+      #     fi
+
+
+      #     # If we reach here, none of the fail conditions triggered => pass
+      #     echo "All vulnerability checks passed. Proceeding..."
+      #     exit 0
+
+
+      # # Step 7 : Docker Login
+      # # This will only run if Step 6 succeeds (exit 0).
+      # - name: Docker Login
+      #   # if: ${{ env.high_critical_count <= 5 }}
+      #   run: |
+      #     echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+
+      # # Step 8 : Docker Image Push to Dockerhub
+      # # This will only run if Step 6 succeeds (exit 0).
+      # - name: Tag and push Docker image to DockerHub
+      #   # if: ${{ env.high_critical_count <= 5 }}
+      #   run: |
+      #     echo "Tagging Docker image..."
+      #     docker tag $DOCKER_IMAGE_NAME:$DOCKER_TAG $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$DOCKER_TAG
+      #     echo "Pushing Docker image to DockerHub..."
+      #     docker push $DOCKER_USERNAME/$DOCKER_IMAGE_NAME:$DOCKER_TAG
+
+
+
+
 
 
 # ######################################################################################################
