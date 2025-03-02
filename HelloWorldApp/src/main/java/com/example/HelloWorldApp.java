@@ -54,7 +54,7 @@ public class HelloWorldApp {
                         "    <div>" + 
                         "        <a href=\"https://www.linkedin.com/in/umairgl/\" class=\"fa fa-linkedin\"></a>" + 
                         "        <a href=\"https://www.facebook.com/umairgl\" class=\"fa fa-facebook\"></a>" + 
-                        "        <a href=\"https://mail.google.com/mail/?view=cm&fs=1&to=umair123@gmail.com\" class=\"fa fa-google\"></a>" + 
+                        "        <a href=\"https://mail.google.com/mail/?view=cm&fs=1&to=umairgl123@gmail.com" class=\"fa fa-google\"></a>" + 
                         "    </div>" + 
                         "    <p><i>Reach Me from one of any above Platform</i></p>" +
                         "    <h2>This is my Java Application</h2>" + 
