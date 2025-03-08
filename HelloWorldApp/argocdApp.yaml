@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://gitlab.com/nanuchi/argocd-app-config.git
+    repoURL: https://github.com/Umair-Gillani/Java-Application-CI-CD.git
     targetRevision: main
     path: HelloWorldApp
 
