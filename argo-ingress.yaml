@@ -4,17 +4,17 @@ metadata:
   name: argocd-ingress
   namespace: argocd
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Disable forced HTTPS
 spec:
   rules:
-    - host: cyberwing.info  # Change this to your custom domain or use EXTERNAL-IP
+    - host: cyberwing.info
       http:
         paths:
-          - path: /argocd
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: argocd-server
                 port:
-                  number: 443
+                  number: 80  # ArgoCD listens on port 80 for HTTP
