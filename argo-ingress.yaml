@@ -8,7 +8,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: 51.8.59.47  # Change this to your custom domain or use EXTERNAL-IP
+    - host: cyberwing.info  # Change this to your custom domain or use EXTERNAL-IP
       http:
         paths:
           - path: /argocd
