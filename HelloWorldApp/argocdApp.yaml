@@ -1,0 +1,45 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: myapp-argo-application
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://gitlab.com/nanuchi/argocd-app-config.git
+    targetRevision: main
+    path: HelloWorldApp
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default
+
+  syncPolicy:
+  syncOptions:
+    - CreateNamespace=true  # Automatically creates the namespace if it does not exist
+  automated:
+    selfHeal: true  # Continuously reconciles the application with the Git repository
+    prune: true  # Deletes (prunes) resources that are removed from Git
+
+  syncWindows: []  # You are removing all sync windows, meaning ArgoCD can deploy at any time without restrictions.
+
+#   With syncWindows: [], ArgoCD will deploy immediately after detecting changes.
+# With syncWindows, ArgoCD will wait until an allowed time window before deploying.
+# Choose the best option based on your deployment needs. 🚀
+
+
+  # All syncPolicies below:
+  
+  # syncPolicy:
+  #   syncOptions:
+  #     - CreateNamespace=true        # Creates namespace if it does not exist
+  #     - PruneLast=true              # Prune deleted resources at the end of the sync process
+  #     - PrunePropagationPolicy=foreground # Defines how pruning deletes resources (foreground, background, orphan)
+  #     - ApplyOutOfSyncOnly=true     # Only applies changes to out-of-sync resources
+  #     - Validate=true               # Enables schema validation before applying changes
+  #     - ServerSideApply=true        # Uses Kubernetes Server-Side Apply instead of client-side apply
+  #     - RespectIgnoreDifferences=true # Ignores specified differences from `.argocd-ignore-differences.yaml`
+  #     - ApplyStrategy=alpha       # Uses "alpha" apply strategy (future Kubernetes features)
+
+
