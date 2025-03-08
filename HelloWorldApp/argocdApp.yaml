@@ -22,7 +22,7 @@ spec:
       selfHeal: true  # Continuously reconciles the application with the Git repository
       prune: true  # Deletes (prunes) resources that are removed from Git
 
-    syncWindows: []  # You are removing all sync windows, meaning ArgoCD can deploy at any time without restrictions.
+    # syncWindows: []  # You are removing all sync windows, meaning ArgoCD can deploy at any time without restrictions.
 
 #   With syncWindows: [], ArgoCD will deploy immediately after detecting changes.
 # With syncWindows, ArgoCD will wait until an allowed time window before deploying.
