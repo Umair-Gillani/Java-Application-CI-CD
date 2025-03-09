@@ -2,12 +2,12 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: argocd-ingress
-  namespace: argocd  # Ingress must be in the same namespace as the services
+  namespace: default  # ✅ Moved to default namespace
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
-  ingressClassName: nginx  # Ensure IngressClass is set
+  ingressClassName: nginx  # ✅ Ensures Ingress is using the correct class
   tls:
     - hosts:
         - cyberwing.info
