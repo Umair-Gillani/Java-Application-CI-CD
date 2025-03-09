@@ -4,9 +4,12 @@ metadata:
   name: argocd-ingress
   namespace: argocd
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Disable forced HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  tls:
+    - hosts:
+        - cyberwing.info  # Change to your domain
+      secretName: argocd-tls
   rules:
     - host: cyberwing.info
       http:
@@ -17,4 +20,4 @@ spec:
               service:
                 name: argocd-server
                 port:
-                  number: 80  # ArgoCD listens on port 80 for HTTP
+                  number: 443
