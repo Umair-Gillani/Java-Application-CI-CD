@@ -5,22 +5,23 @@ metadata:
   namespace: argocd
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   tls:
     - hosts:
-        - cyberwing.info  # Change to your domain
+        - cyberwing.info
       secretName: argocd-tls
   rules:
     - host: cyberwing.info
       http:
         paths:
-          - path: /argocd
+          - path: /
             pathType: Prefix
             backend:
               service:
                 name: argocd-server
                 port:
-                  number: 443
+                  number: 80  # ✅ FIXED: Use port 80 instead of 443
           - path: /umair
             pathType: Prefix
             backend:
