@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: argocd-ingress
+  name: ingress
   namespace: default  # ✅ Moved to default namespace
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
@@ -12,7 +12,7 @@ spec:
   tls:
     - hosts:
         - cyberwing.info
-      secretName: argocd-tls
+      secretName: tls
   rules:
     - host: cyberwing.info
       http:
