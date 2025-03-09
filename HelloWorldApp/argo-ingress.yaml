@@ -4,9 +4,10 @@ metadata:
   name: argocd-ingress
   namespace: argocd
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  ingressClassName: nginx  # ✅ Ensure IngressClass is set
   tls:
     - hosts:
         - cyberwing.info
@@ -21,7 +22,7 @@ spec:
               service:
                 name: argocd-server
                 port:
-                  number: 80  # ✅ FIXED: Use port 80 instead of 443
+                  number: 80
           - path: /umair
             pathType: Prefix
             backend:
@@ -29,3 +30,4 @@ spec:
                 name: helloworldapp-service
                 port:
                   number: 8080
+                namespace: default  # ✅ Add namespace here
