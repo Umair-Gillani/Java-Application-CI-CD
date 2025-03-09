@@ -25,130 +25,130 @@ jobs:
       
     steps:
       # Step 1: Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false  # Doesn't save default credentials
+      # - name: Checkout code
+      #   uses: actions/checkout@v4
+      #   with:
+      #     persist-credentials: false  # Doesn't save default credentials
 
-      # Step 2: Set up Maven environment
-      - name: Install Maven 3.9.6
-        run: |
-          #echo "Installing Maven $MAVEN_VERSION..."
-          #wget https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz -P ${{ runner.temp }}
-          #tar -xzf ${{ runner.temp }}/apache-maven-${MAVEN_VERSION}-bin.tar.gz -C ${{ runner.temp }}
-          #echo "MAVEN_HOME=${{ runner.temp }}/apache-maven-${MAVEN_VERSION }}" >> $GITHUB_ENV
-          #echo "PATH=${{ runner.temp }}/apache-maven-${MAVEN_VERSION }}/bin:$PATH" >> $GITHUB_ENV
+      # # Step 2: Set up Maven environment
+      # - name: Install Maven 3.9.6
+      #   run: |
+      #     #echo "Installing Maven $MAVEN_VERSION..."
+      #     #wget https://dlcdn.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz -P ${{ runner.temp }}
+      #     #tar -xzf ${{ runner.temp }}/apache-maven-${MAVEN_VERSION}-bin.tar.gz -C ${{ runner.temp }}
+      #     #echo "MAVEN_HOME=${{ runner.temp }}/apache-maven-${MAVEN_VERSION }}" >> $GITHUB_ENV
+      #     #echo "PATH=${{ runner.temp }}/apache-maven-${MAVEN_VERSION }}/bin:$PATH" >> $GITHUB_ENV
 
 
-          # Download Maven
-          echo "Downloading Maven..."
-          wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
+      #     # Download Maven
+      #     echo "Downloading Maven..."
+      #     wget https://dlcdn.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.tar.gz
           
-          # Extract Maven
-          echo "Extracting Maven..."
-          sudo tar -xzf apache-maven-3.9.6-bin.tar.gz -C /opt/
+      #     # Extract Maven
+      #     echo "Extracting Maven..."
+      #     sudo tar -xzf apache-maven-3.9.6-bin.tar.gz -C /opt/
           
-          # Rename directory
-          echo "Setting up Maven directory..."
-          sudo mv /opt/apache-maven-3.9.6 /opt/maven
+      #     # Rename directory
+      #     echo "Setting up Maven directory..."
+      #     sudo mv /opt/apache-maven-3.9.6 /opt/maven
           
-          # Set up environment variables
-          echo "Configuring environment variables..."
-          echo "MAVEN_HOME=/opt/maven" >> $GITHUB_ENV
-          echo "PATH=/opt/maven/bin:$PATH" >> $GITHUB_ENV
+      #     # Set up environment variables
+      #     echo "Configuring environment variables..."
+      #     echo "MAVEN_HOME=/opt/maven" >> $GITHUB_ENV
+      #     echo "PATH=/opt/maven/bin:$PATH" >> $GITHUB_ENV
           
-      - name: Set up Maven environment
-        run: |
-          echo "Setting up Maven environment..."
-          mvn -version
+      # - name: Set up Maven environment
+      #   run: |
+      #     echo "Setting up Maven environment..."
+      #     mvn -version
       
-      # Step 3: Setup Trivy for Scanning
-      - name: Install Trivy
-        run: |
-          echo "Installing Trivy..."
-          sudo apt-get update
-          sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-          wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-          echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-          sudo apt-get update
-          sudo apt-get install -y trivy
+      # # Step 3: Setup Trivy for Scanning
+      # - name: Install Trivy
+      #   run: |
+      #     echo "Installing Trivy..."
+      #     sudo apt-get update
+      #     sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+      #     wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+      #     echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+      #     sudo apt-get update
+      #     sudo apt-get install -y trivy
 
-      # Step 4: Build with Maven
-      - name: Build with Maven
-        run: |
-          echo "Building the project..."
-          cd HelloWorldApp
-          mvn clean
-          mvn install
+      # # Step 4: Build with Maven
+      # - name: Build with Maven
+      #   run: |
+      #     echo "Building the project..."
+      #     cd HelloWorldApp
+      #     mvn clean
+      #     mvn install
 
-      # Step 5 : Build Docker Image
-      - name: Build Docker image
-        run: |
-          echo "Building Docker image..."
-          cd HelloWorldApp
-          docker build -t $DOCKER_IMAGE_NAME:$DOCKER_TAG .
+      # # Step 5 : Build Docker Image
+      # - name: Build Docker image
+      #   run: |
+      #     echo "Building Docker image..."
+      #     cd HelloWorldApp
+      #     docker build -t $DOCKER_IMAGE_NAME:$DOCKER_TAG .
 
 
-      # Step 6 : Scan Docker Image
-      - name: Scan Docker image with Trivy
-        id: trivy_scan
-        run: |
-          echo "Scanning Docker image with Trivy..."
-          cd HelloWorldApp
-          trivy image --exit-code 0 --severity CRITICAL,HIGH --format json --no-progress $DOCKER_IMAGE_NAME:$DOCKER_TAG > trivy_report.json
+      # # Step 6 : Scan Docker Image
+      # - name: Scan Docker image with Trivy
+      #   id: trivy_scan
+      #   run: |
+      #     echo "Scanning Docker image with Trivy..."
+      #     cd HelloWorldApp
+      #     trivy image --exit-code 0 --severity CRITICAL,HIGH --format json --no-progress $DOCKER_IMAGE_NAME:$DOCKER_TAG > trivy_report.json
 
-          HIGH_COUNT=$(grep -o '"Severity": "HIGH"' trivy_report.json | wc -l)
-          CRITICAL_COUNT=$(grep -o '"Severity": "CRITICAL"' trivy_report.json | wc -l)
+      #     HIGH_COUNT=$(grep -o '"Severity": "HIGH"' trivy_report.json | wc -l)
+      #     CRITICAL_COUNT=$(grep -o '"Severity": "CRITICAL"' trivy_report.json | wc -l)
 
-          HIGH_COUNT=${HIGH_COUNT:-0}
-          CRITICAL_COUNT=${CRITICAL_COUNT:-0}
+      #     HIGH_COUNT=${HIGH_COUNT:-0}
+      #     CRITICAL_COUNT=${CRITICAL_COUNT:-0}
 
-          ############ TOTAL_HIGH_CRITICAL=$((HIGH_COUNT + CRITICAL_COUNT))
+      #     ############ TOTAL_HIGH_CRITICAL=$((HIGH_COUNT + CRITICAL_COUNT))
 
-          echo "High vulnerabilities: $HIGH_COUNT"
-          echo "Critical vulnerabilities: $CRITICAL_COUNT"
+      #     echo "High vulnerabilities: $HIGH_COUNT"
+      #     echo "Critical vulnerabilities: $CRITICAL_COUNT"
          
-          echo "HIGH_COUNT=$HIGH_COUNT" >> $GITHUB_ENV
-          echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
+      #     echo "HIGH_COUNT=$HIGH_COUNT" >> $GITHUB_ENV
+      #     echo "CRITICAL_COUNT=$CRITICAL_COUNT" >> $GITHUB_ENV
 
-          ############ echo "Total High + Critical vulnerabilities: $TOTAL_HIGH_CRITICAL"
-          ############ echo "high_critical_count=$TOTAL_HIGH_CRITICAL" >> $GITHUB_ENV
-
-
-      # Step 7: Check vulnerability threshold (Industry-Level + Custom Logic)
-      - name: Check vulnerability threshold
-        run: |
-          echo "Performing vulnerability checks..."
-
-          echo "HIGH_COUNT: $HIGH_COUNT"
-          echo "CRITICAL_COUNT: $CRITICAL_COUNT"
-
-          # --- EXAMPLE 1: Zero-tolerance for ANY Critical vulnerabilities ---
-          # (Uncomment if your organization disallows ANY critical vulns)
-          #
-          # if [ "$CRITICAL_COUNT" -gt 0 ]; then
-          #   echo "Found $CRITICAL_COUNT critical vulnerabilities. Aborting push."
-          #   exit 1
-          # fi
-
-          # --- EXAMPLE 2: Maximum allowed CRITICAL vulnerabilities threshold ---
-          # If CRITICAL exceeds 75, fail immediately.
-          if [ "$CRITICAL_COUNT" -gt 5 ]; then
-            echo "Critical vulnerabilities ($CRITICAL_COUNT) exceed maximum allowed (5). Aborting push."
-            exit 1
-          fi
-
-          # --- EXAMPLE 3: Maximum allowed HIGH vulnerabilities threshold ---
-          # If HIGH exceeds, say, 50, fail. Adjust as needed.
-          if [ "$HIGH_COUNT" -gt 50 ]; then
-            echo "High vulnerabilities ($HIGH_COUNT) exceed maximum allowed (50). Aborting push."
-            exit 1
-          fi
+      #     ############ echo "Total High + Critical vulnerabilities: $TOTAL_HIGH_CRITICAL"
+      #     ############ echo "high_critical_count=$TOTAL_HIGH_CRITICAL" >> $GITHUB_ENV
 
 
-          # If we reach here, none of the fail conditions triggered => pass
-          echo "All vulnerability checks passed. Proceeding..."
-          exit 0
+      # # Step 7: Check vulnerability threshold (Industry-Level + Custom Logic)
+      # - name: Check vulnerability threshold
+      #   run: |
+      #     echo "Performing vulnerability checks..."
+
+      #     echo "HIGH_COUNT: $HIGH_COUNT"
+      #     echo "CRITICAL_COUNT: $CRITICAL_COUNT"
+
+      #     # --- EXAMPLE 1: Zero-tolerance for ANY Critical vulnerabilities ---
+      #     # (Uncomment if your organization disallows ANY critical vulns)
+      #     #
+      #     # if [ "$CRITICAL_COUNT" -gt 0 ]; then
+      #     #   echo "Found $CRITICAL_COUNT critical vulnerabilities. Aborting push."
+      #     #   exit 1
+      #     # fi
+
+      #     # --- EXAMPLE 2: Maximum allowed CRITICAL vulnerabilities threshold ---
+      #     # If CRITICAL exceeds 75, fail immediately.
+      #     if [ "$CRITICAL_COUNT" -gt 5 ]; then
+      #       echo "Critical vulnerabilities ($CRITICAL_COUNT) exceed maximum allowed (5). Aborting push."
+      #       exit 1
+      #     fi
+
+      #     # --- EXAMPLE 3: Maximum allowed HIGH vulnerabilities threshold ---
+      #     # If HIGH exceeds, say, 50, fail. Adjust as needed.
+      #     if [ "$HIGH_COUNT" -gt 50 ]; then
+      #       echo "High vulnerabilities ($HIGH_COUNT) exceed maximum allowed (50). Aborting push."
+      #       exit 1
+      #     fi
+
+
+      #     # If we reach here, none of the fail conditions triggered => pass
+      #     echo "All vulnerability checks passed. Proceeding..."
+      #     exit 0
 
 
       # Step 8 : Docker Login
