@@ -4,7 +4,8 @@ metadata:
   name: ingress
   namespace: default  # ✅ Moved to default namespace
   annotations:
-    # nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/rewrite-target: /$1     # (This is for ArgoCD)
+    nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  # ArgoCD runs on HTTPS (This is for ArgoCD)
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"    # Forces HTTP to HTTPS redirection even if TLS is not configured in the Ingress
 spec:
@@ -17,7 +18,7 @@ spec:
     - host: cyberwing.info
       http:
         paths:
-          - path: /argocd
+          - path: /argocd(/|$)(.*)
             pathType: Prefix
             backend:
               service:
