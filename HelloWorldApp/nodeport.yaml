@@ -1,37 +1,37 @@
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   name: helloworldapp
-#   labels:
-#     app: helloworldapp
-# spec:
-#   replicas: 3
-#   selector:
-#     matchLabels:
-#       app: helloworldapp
-#   template:
-#     metadata:
-#       labels:
-#         app: helloworldapp
-#     spec:
-#       containers:
-#       - name: helloworldapp
-#         image: umair7865/java:latest  
-#         ports:
-#         - containerPort: 8080
-# ---
-# apiVersion: v1
-# kind: Service
-# metadata:
-#   name: helloworldapp-service
-#   labels:
-#     app: helloworldapp
-# spec:
-#   selector:
-#     app: helloworldapp
-#   ports:
-#     - protocol: TCP
-#       port: 9090  # The port your application listens on inside the container
-#       targetPort: 8080  # The container port to forward to
-#       # nodePort: 30080   # This is the port exposed on your node (accessible via <Node-IP>:30080)
-#   type: ClusterIP
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworldapp
+  labels:
+    app: helloworldapp
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: helloworldapp
+  template:
+    metadata:
+      labels:
+        app: helloworldapp
+    spec:
+      containers:
+      - name: helloworldapp
+        image: umair7865/java:latest  
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworldapp-service
+  labels:
+    app: helloworldapp
+spec:
+  selector:
+    app: helloworldapp
+  ports:
+    - protocol: TCP
+      port: 9090  # The port your application listens on inside the container
+      targetPort: 8080  # The container port to forward to
+      # nodePort: 30080   # This is the port exposed on your node (accessible via <Node-IP>:30080)
+  type: ClusterIP
