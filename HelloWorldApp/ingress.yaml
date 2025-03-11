@@ -18,7 +18,7 @@ spec:
     - host: cyberwing.info
       http:
         paths:
-          - path: /argocd(/|$)(.*)
+          - path: /argocd
             pathType: Prefix
             backend:
               service:
