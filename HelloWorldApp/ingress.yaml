@@ -17,24 +17,24 @@ spec:
     - host: cyberwing.info
       http:
         paths:
-          - path: /
+          - path: /argocd
             pathType: Prefix
             backend:
               service:
                 name: argocd-server
                 port:
-                  number: 443
+                  number: 8080
           - path: /umair
             pathType: Prefix
             backend:
               service:
                 name: helloworldapp-service
                 port:
-                  number: 8080
+                  number: 9090
           - path: /image
             pathType: Prefix
             backend:
               service:
                 name: helloworldapp-service
                 port:
-                  number: 8080
+                  number: 9090
