@@ -12,7 +12,7 @@ spec:
   tls:
     - hosts:
         - cyberwing.info
-      secretName: tls
+      # secretName: tls
   rules:
     - host: cyberwing.info
       http:
