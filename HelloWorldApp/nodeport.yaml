@@ -1,3 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworldapp
+  labels:
+    app: helloworldapp
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: helloworldapp=umairgl123/java
+    argocd-image-updater.argoproj.io/update-strategy: latest
+    argocd-image-updater.argoproj.io/write-back-method: none  # Git push disable
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # Ek time pe max 1 pod unavailable ho sakta hai
+      maxSurge: 1        # Ek extra pod create hoga jab update ho rahi ho
+  minReadySeconds: 10  # Ensure karta hai ke naye pods running ho tabhi update consider ho
+  revisionHistoryLimit: 5  # Last 5 deployments ka history maintain karega rollback ke liye
+  selector:
+    matchLabels:
+      app: helloworldapp
+  template:
+    metadata:
+      labels:
+        app: helloworldapp
+    spec:
+      containers:
+      - name: helloworldapp
+        image: umairgl123/java:latest  
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworldapp-service
+  labels:
+    app: helloworldapp
+spec:
+  selector:
+    app: helloworldapp
+  ports:
+    - protocol: TCP
+      port: 9090  # The port your application listens on inside the container
+      targetPort: 8080
+  type: ClusterIP
+
+
 # apiVersion: apps/v1
 # kind: Deployment
 # metadata:
