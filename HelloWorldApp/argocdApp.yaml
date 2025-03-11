@@ -10,6 +10,8 @@ spec:
     repoURL: https://github.com/Umair-Gillani/Java-Application-CI-CD.git
     targetRevision: main
     path: HelloWorldApp
+    directory:
+      recurse: true  # Ensures all YAML manifests are loaded
 
   destination:
     server: https://kubernetes.default.svc
