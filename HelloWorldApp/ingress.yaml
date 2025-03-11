@@ -18,13 +18,6 @@ spec:
     - host: cyberwing.info
       http:
         paths:
-          # - path: /argocd
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: argocd-server
-          #       port:
-          #         number: 443
           - path: /umair
             pathType: Prefix
             backend:
