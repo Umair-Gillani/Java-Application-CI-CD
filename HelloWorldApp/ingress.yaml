@@ -32,3 +32,10 @@ spec:
                 name: helloworldapp-service
                 port:
                   number: 9090
+          - path: /attorney
+            pathType: Prefix
+            backend:
+              service:
+                name: attorney-service
+                port:
+                  number: 8888
