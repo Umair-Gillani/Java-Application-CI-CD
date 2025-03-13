@@ -4,16 +4,10 @@ metadata:
   name: ingress
   namespace: default  # ✅ Moved to default namespace
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /    
+    nginx.ingress.kubernetes.io/rewrite-target: /$2    
     # nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"  
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"    # Forces HTTP to HTTPS redirection even if TLS is not configured in the Ingress
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      location /attorney {
-          root /usr/share/nginx/html;
-          index index.html;
-          try_files $uri $uri/ /index.html;
-      }
 spec:
   ingressClassName: nginx  # ✅ Ensures Ingress is using the correct class
   tls:
