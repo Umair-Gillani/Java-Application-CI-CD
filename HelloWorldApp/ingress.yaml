@@ -18,24 +18,27 @@ spec:
     - host: cyberwing.info
       http:
         paths:
-          - path: /umair
-            pathType: Prefix
-            backend:
-              service:
-                name: helloworldapp-service
-                port:
-                  number: 9090
-          - path: /image
-            pathType: Prefix
-            backend:
-              service:
-                name: helloworldapp-service
-                port:
-                  number: 9090
-          - path: /attorney
-            pathType: Prefix
+ # Serve Angular app at /attorney
+          - path: /attorney(/|$)(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: attorney-service
                 port:
                   number: 8888
+          # Serve images at /image
+          - path: /image(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: helloworldapp-service
+                port:
+                  number: 9090
+          # Serve another app at /umair
+          - path: /umair(/|$)(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: helloworldapp-service
+                port:
+                  number: 9090
