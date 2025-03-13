@@ -32,7 +32,8 @@ spec:
                 name: helloworldapp-service
                 port:
                   number: 9090
-          - path: /attorney
+ # Serve static files separately
+          - path: /attorney/(.*\.(js|css|png|jpg|jpeg|svg|woff2?|ttf|eot|json|ico))
             pathType: Prefix
             backend:
               service:
